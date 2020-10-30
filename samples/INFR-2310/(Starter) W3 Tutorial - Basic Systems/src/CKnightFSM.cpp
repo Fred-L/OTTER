@@ -34,6 +34,18 @@ namespace nou
 		ClearTriggers();
 
 		//TODO: Complete this function.
+		switch (m_state)
+		{
+		case AnimState::IDLE:
+			animator.PlayLoop(idleClip);
+			break;
+		case AnimState::RUN:
+			animator.PlayLoop(runClip);
+			break;
+		default:
+			animator.PlayOnce(attackClip);
+			break;
+		}
 	}
 
 
@@ -42,5 +54,28 @@ namespace nou
 		auto& animator = m_owner->Get<CSpriteAnimator>();
 
 		//TODO: Complete this function.
+		switch (m_state)
+		{
+		case AnimState::IDLE:
+
+			if (GetVariable("moving"))
+				SetState(AnimState::RUN);
+			if (GetTrigger("attack"))
+				SetState(AnimState::ATTACK);
+			break;
+
+		case AnimState::RUN:
+
+			if (!GetVariable("moving"))
+				SetState(AnimState::IDLE);
+
+			break;
+		case AnimState::ATTACK:
+			if (!GetVariable("moving") && m_owner->Get<CSpriteAnimator>().IsDone())
+			{
+				SetState(AnimState::IDLE);
+			}
+			break;
+		}
 	}	
 }
